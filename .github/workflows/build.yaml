@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
+      - run: docker compose up -d --wait
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
