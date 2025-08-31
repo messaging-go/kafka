@@ -1,6 +1,7 @@
 package consumer
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
@@ -31,17 +32,17 @@ func getMessageOrNil(event kafka.Event) *kafka.Message {
 func (c consumerImpl) Commit(message *kafka.Message) error {
 	_, err := c.kakfaConsumer.CommitMessage(message)
 
-	return err
+	return err //nolint:wrapcheck // we don't have additional logic here, so we return the raw error
 }
 
 func (c consumerImpl) Close() error {
-	return c.kakfaConsumer.Close()
+	return c.kakfaConsumer.Close() //nolint:wrapcheck // we don't have additional logic here.
 }
 
 func New(rawConsumer *kafka.Consumer, topics []string) (Consumer, error) {
 	err := rawConsumer.SubscribeTopics(topics, nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to subscribe to topics: %w", err)
 	}
 
 	return consumerImpl{kakfaConsumer: rawConsumer}, nil
